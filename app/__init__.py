@@ -1,6 +1,11 @@
+import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+
+# load dotenv in the base root
+APP_ROOT = os.path.join(os.path.dirname(__file__), '..')   # refers to application_top
+dotenv_path = os.path.join(APP_ROOT, '.env')
 
 db = SQLAlchemy()
 migrate = Migrate()

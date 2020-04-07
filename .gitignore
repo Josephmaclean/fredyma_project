@@ -1,0 +1,6 @@
+venv
+.env
+build
+dist
+Fredyma_Studio_Project.egg-info
+__pycache__/*
