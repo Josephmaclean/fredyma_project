@@ -14,7 +14,9 @@ setup(
         'Flask-Migrate>=2.5.3',
         'psycopg2>=2.8.5',
         'python-dotenv>=0.12.0',
-        'flask-marshmallow>=0.11.0'
+        'flask-marshmallow>=0.11.0',
+        'marshmallow-sqlalchemy>=0.22.3',
+        'PyJWT>=1.7.1',
     ],
     classifiers=[
         'Environment :: Web Environment',

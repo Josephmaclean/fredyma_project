@@ -1,5 +1,4 @@
-from app import db
-import json
+from app import db, ma
 
 
 class Client(db.Model):
@@ -9,9 +8,11 @@ class Client(db.Model):
     phone_number = db.Column(db.String(12), nullable=False, unique=True)
     password = db.Column(db.String(), nullable=False)
 
-    def __repr__(self):
-        client_object = {
-            'name': self.name,
-            'phone_number': self.phone_number,
-        }
-        return json.dumps(client_object)
+
+class ClientSchema(ma.Schema):
+    class Meta:
+        fields = ['id', 'name', 'phone_number']
+
+
+client_schema = ClientSchema()
+clients_schema = ClientSchema(many=True)

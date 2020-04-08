@@ -12,8 +12,9 @@ db = SQLAlchemy()
 migrate = Migrate()
 ma = Marshmallow()
 
-
+# import views
 from .clients.views import clients
+from .studio.views import studio
 
 
 def create_app():
@@ -43,4 +44,5 @@ def register_extensions(app):
 def register_blueprints(app):
     """Register Flask blueprints."""
     app.register_blueprint(clients)
+    app.register_blueprint(studio)
     return None

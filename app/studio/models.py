@@ -1,4 +1,5 @@
-from app import db
+from app import db, ma
+from marshmallow import validate, fields, Schema
 
 
 class Studio(db.Model):
@@ -9,9 +10,26 @@ class Studio(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(), nullable=False)
 
-    def __repr__(self):
-        studio_object = {
-            'id': self.id,
-            'name': self.name,
-            'email': self.email
-        }
+
+class StudioSchema(ma.Schema):
+    name = fields.Str(required=True)
+    email = fields.Email(required=True, error="not a valid email")
+    password = fields.Str(required=True, validate=validate.Length(min=6))
+
+    class Meta:
+        fields = ['id', 'name', 'email', 'password']
+
+
+class LoginSchema(ma.Schema):
+    token = fields.Str()
+    studio = fields.Nested(StudioSchema(exclude=['password']))
+
+    class Meta:
+        fields = ['token', 'studio']
+
+
+studio_schema = StudioSchema(exclude=['password'])
+studio_input_schema = StudioSchema()
+studios_schema = StudioSchema(many=True, exclude=['password'])
+studio_schema_signin_input = StudioSchema(exclude=['name'])
+studio_signin_schema = LoginSchema()
