@@ -2,6 +2,7 @@ import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_marshmallow import  Marshmallow
 
 # load dotenv in the base root
 APP_ROOT = os.path.join(os.path.dirname(__file__), '..')  # refers to application_top
@@ -9,6 +10,7 @@ dotenv_path = os.path.join(APP_ROOT, '.env')
 
 db = SQLAlchemy()
 migrate = Migrate()
+ma = Marshmallow()
 
 
 from .clients.views import clients
@@ -31,6 +33,7 @@ def register_extensions(app):
     """Register Flask extensions."""
     db.init_app(app)
     migrate.init_app(app, db)
+    ma.init_app(app)
 
     with app.app_context():
         db.create_all()

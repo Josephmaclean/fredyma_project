@@ -13,7 +13,8 @@ setup(
         'Flask-SQLAlchemy>=2.4.1',
         'Flask-Migrate>=2.5.3',
         'psycopg2>=2.8.5',
-        'python-dotenv>=0.12.0'
+        'python-dotenv>=0.12.0',
+        'flask-marshmallow>=0.11.0'
     ],
     classifiers=[
         'Environment :: Web Environment',
