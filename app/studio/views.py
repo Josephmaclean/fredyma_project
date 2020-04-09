@@ -9,7 +9,7 @@ load_dotenv(dotenv_path)
 from app import db
 from .models import (Studio, studio_input_schema,
                      studio_schema, studio_schema_signin_input,
-                     studio_signin_schema)
+                     studio_signin_schema, studios_schema)
 
 studio = Blueprint('studio', __name__)
 
@@ -60,3 +60,25 @@ def signin():
             'studio': studio_instance
         }
         return Response(studio_signin_schema.dumps(result), 200, mimetype='application/json')
+
+
+@studio.route("/studio/<int:studio_id>", methods=["GET"])
+def get_studio(studio_id):
+    try:
+        studio = Studio.query.filter_by(id=studio_id).first_or_404()
+        result = studio_schema.dumps(studio)
+        return Response(result, 200, mimetype='application/json')
+    except SQLAlchemyError as e:
+        error = str(e.__dict__['orig'])
+        return error
+
+
+@studio.route('/studio', methods=['GET'])
+def get_all_studios():
+    try:
+        studios = Studio.query.all()
+        result = studios_schema.dumps(studios)
+        return Response(result, 200, mimetype='application/json')
+    except SQLAlchemyError as e:
+        error = str(e.__dict__['orig'])
+        return error
