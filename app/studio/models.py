@@ -1,5 +1,5 @@
 from app import db, ma
-from marshmallow import validate, fields, Schema
+from marshmallow import validate, fields
 
 
 class Studio(db.Model):

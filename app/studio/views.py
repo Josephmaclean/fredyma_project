@@ -1,7 +1,7 @@
 import os, json, jwt, bcrypt
-from dotenv import  load_dotenv
-from app import  dotenv_path
-from flask import Blueprint, request, Response, abort, jsonify
+from dotenv import load_dotenv
+from app import dotenv_path
+from flask import Blueprint, request, Response, abort
 from sqlalchemy.exc import SQLAlchemyError
 
 load_dotenv(dotenv_path)
@@ -82,3 +82,10 @@ def get_all_studios():
     except SQLAlchemyError as e:
         error = str(e.__dict__['orig'])
         return error
+
+
+@studio.route('/studio/<int:studio_id>', methods=['DELETE'])
+def delete_studio(studio_id):
+    Studio.query.filter_by(id=studio_id).delete()
+    db.session.commit()
+    return Response("", 204, mimetype='application/json')

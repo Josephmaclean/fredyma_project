@@ -1,4 +1,5 @@
 from app import db, ma
+from marshmallow import  validate, fields
 
 client_studio = db.Table('client_studio',
                          db.Column('client_id', db.Integer, db.ForeignKey('client.id'), primary_key=True),
@@ -17,9 +18,24 @@ class Client(db.Model):
 
 
 class ClientSchema(ma.Schema):
+    name = fields.Str(required=True)
+    phone_number = fields.Str(required=True, validate=validate.Length(min=10))
+    password = fields.Str(required=True, validate=validate.Length(min=6))
+
     class Meta:
-        fields = ['id', 'name', 'phone_number']
+        fields = ['id', 'name', 'phone_number', 'password']
 
 
-client_schema = ClientSchema()
-clients_schema = ClientSchema(many=True)
+class ClientUpdateSchema(ma.Schema):
+    name = fields.Str( validate=validate.Length(min=3))
+    phone_number = fields
+    password = fields.Str(validate=validate.Length(min=6))
+
+    class Meta:
+        fields = ['name', 'phone_number', 'password']
+
+
+client_schema = ClientSchema(exclude=['password'])
+clients_schema = ClientSchema(many=True, exclude=['password'])
+client_input_schema = ClientSchema()
+client_update_schema = ClientUpdateSchema()
