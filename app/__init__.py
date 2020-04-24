@@ -15,6 +15,7 @@ ma = Marshmallow()
 # import views
 from .clients.views import clients
 from .studio.views import studio
+from .booking.views import booking
 
 
 def create_app():
@@ -45,4 +46,5 @@ def register_blueprints(app):
     """Register Flask blueprints."""
     app.register_blueprint(clients)
     app.register_blueprint(studio)
+    app.register_blueprint(booking)
     return None
