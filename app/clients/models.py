@@ -1,13 +1,19 @@
 from app import db, ma
-from marshmallow import  validate, fields
+from marshmallow import validate, fields
 
+# Pivot table for many to many relationship between client and studio
 client_studio = db.Table('client_studio',
                          db.Column('client_id', db.Integer, db.ForeignKey('client.id'), primary_key=True),
                          db.Column('studio_id', db.Integer, db.ForeignKey('studio.id'), primary_key=True)
                          )
 
 
+# Client model
 class Client(db.Model):
+    """
+    Client model
+    fields = [id, name, phone_number, password
+    """
     __tablename__ = 'client'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
@@ -27,7 +33,7 @@ class ClientSchema(ma.Schema):
 
 
 class ClientUpdateSchema(ma.Schema):
-    name = fields.Str( validate=validate.Length(min=3))
+    name = fields.Str(validate=validate.Length(min=3))
     phone_number = fields
     password = fields.Str(validate=validate.Length(min=6))
 
@@ -48,4 +54,4 @@ clients_schema = ClientSchema(many=True, exclude=['password'])
 client_input_schema = ClientSchema(exclude=['id'])
 client_update_schema = ClientUpdateSchema()
 client_login_output_schema = LoginOutputSchema()
-client_login_input_schema = ClientSchema(exclude=['id','name'])
+client_login_input_schema = ClientSchema(exclude=['id', 'name'])

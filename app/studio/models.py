@@ -3,6 +3,10 @@ from marshmallow import validate, fields
 
 
 class Studio(db.Model):
+    """
+    Studio model
+    fields = [id, name, email, password
+    """
     __tablename__ = 'studio'
 
     id = db.Column(db.Integer, primary_key=True)
