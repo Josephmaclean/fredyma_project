@@ -45,6 +45,7 @@ class LoginOutputSchema(ma.Schema):
 
 client_schema = ClientSchema(exclude=['password'])
 clients_schema = ClientSchema(many=True, exclude=['password'])
-client_input_schema = ClientSchema()
+client_input_schema = ClientSchema(exclude=['id'])
 client_update_schema = ClientUpdateSchema()
 client_login_output_schema = LoginOutputSchema()
+client_login_input_schema = ClientSchema(exclude=['id','name'])

@@ -8,7 +8,7 @@ load_dotenv(dotenv_path)
 
 from .models import (Client, client_input_schema,
                      client_schema, clients_schema, client_update_schema,
-                     client_login_output_schema)
+                     client_login_output_schema, client_login_input_schema)
 
 clients = Blueprint('clients', __name__)
 
@@ -77,6 +77,9 @@ def delete_client(client_id):
 
 @clients.route('/auth/studio', methods=['POST'])
 def login():
+    errors = client_login_input_schema.validate(request.json)
+    if errors:
+        abort(Response(json.dumps(errors), 400, mimetype='application/json'))
     details = request.json
     phone_number = details['phone_number']
     password = details['password']
