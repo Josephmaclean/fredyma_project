@@ -62,7 +62,7 @@ def signin():
         return Response(studio_signin_schema.dumps(result), 200, mimetype='application/json')
 
 
-@studio.route("/studio/<int:studio_id>", methods=["GET"])
+@studio.route('/studio/<int:studio_id>', methods=['GET'])
 def get_studio(studio_id):
     try:
         studio = Studio.query.filter_by(id=studio_id).first_or_404()

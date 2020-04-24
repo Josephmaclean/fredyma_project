@@ -1,4 +1,4 @@
-import bcrypt, json
+import bcrypt, json, jwt, os
 from flask import Blueprint, request, Response, abort
 from dotenv import load_dotenv
 from app import db, dotenv_path
@@ -7,7 +7,8 @@ from sqlalchemy.exc import SQLAlchemyError
 load_dotenv(dotenv_path)
 
 from .models import (Client, client_input_schema,
-                     client_schema, clients_schema, client_update_schema)
+                     client_schema, clients_schema, client_update_schema,
+                     client_login_output_schema)
 
 clients = Blueprint('clients', __name__)
 
@@ -64,3 +65,36 @@ def edit_client(client_id):
     except SQLAlchemyError as e:
         error = str(e.__dict__['orig'])
         return error
+
+
+@clients.route('/clients/<int:client_id>', methods=['DELETE'])
+def delete_client(client_id):
+    client = Client.query.filter_by(id=client_id)
+    client.delete()
+    db.session.commit()
+    return Response("", 204, mimetype='application/json')
+
+
+@clients.route('/auth/studio', methods=['POST'])
+def login():
+    details = request.json
+    phone_number = details['phone_number']
+    password = details['password']
+
+    client = Client.query.filter_by(phone_number=phone_number).first()
+    if client == {}:
+        message = {
+            'error': 'unauthorized'
+        }
+        abort(Response(json.dumps(message), 401, mimetype='application/json'))
+
+    instance_id = client.id
+    if bcrypt.checkpw(password.encode('utf-8'), client.password.encode('utf-8')):
+        secret = os.getenv('SECRET_KEY')
+        token = jwt.encode({'id': instance_id}, secret, algorithm='HS256')
+        result = {
+            'token': token,
+            'client': client
+        }
+        data = client_login_output_schema.dumps(result)
+        return Response(data, 200, mimetype='application/json')

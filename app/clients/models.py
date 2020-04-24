@@ -35,7 +35,16 @@ class ClientUpdateSchema(ma.Schema):
         fields = ['name', 'phone_number', 'password']
 
 
+class LoginOutputSchema(ma.Schema):
+    token = fields.Str()
+    client = fields.Nested(ClientSchema(exclude=['password']))
+
+    class Meta:
+        fields = ['token', 'client']
+
+
 client_schema = ClientSchema(exclude=['password'])
 clients_schema = ClientSchema(many=True, exclude=['password'])
 client_input_schema = ClientSchema()
 client_update_schema = ClientUpdateSchema()
+client_login_output_schema = LoginOutputSchema()
