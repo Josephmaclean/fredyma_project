@@ -1,5 +1,6 @@
-import enum
-from app import db
+import enum, datetime
+from app import db, ma
+from marshmallow import fields, validates, ValidationError
 
 
 class SessionType(enum.Enum):
@@ -22,7 +23,41 @@ class Booking(db.Model):
     start_time = db.Column(db.DateTime)
     end_time = db.Column(db.DateTime)
     session_type = db.Column(db.Enum(SessionType, name='session_type'))
+    status = db.Column(db.Boolean, default=False)
 
     __table_args__ = (
         db.UniqueConstraint('studio_id', 'start_time', 'end_time')
     )
+
+
+class BookingSchema(ma.Schema):
+    studio_id = fields.Integer()
+    client_id = fields.Integer()
+    start_time = fields.DateTime()
+    end_time = fields.DateTime()
+    status = fields.Boolean()
+
+    class Meta:
+        fields = ['id', 'studio_id', 'client_id', 'start_time', 'end_time', 'status', ]
+
+
+class BookingInputSchema(ma.Schema):
+    studio_id = fields.Integer(required=True)
+    start_time = fields.Time(required=True)
+    end_time = fields.Time(required=True)
+    date = fields.Date(required=True)
+
+    @validates('end_time')
+    def validate_end_time(self, value):
+        start_time = datetime.datetime.strptime(value, '%H:%M')
+        end_time = datetime.datetime.strptime(self.start_time, '%H:%M')
+        if end_time > start_time:
+            raise ValidationError('end time must be grater than start time')
+
+    class Meta:
+        fields = ['id', 'studio_id', 'client_id', 'start_time', 'end_time']
+
+
+booking_schema = BookingSchema()
+bookings_schema = BookingSchema(many=True)
+bookings_input_schema = BookingSchema(exclude=['client_id', 'status'])
