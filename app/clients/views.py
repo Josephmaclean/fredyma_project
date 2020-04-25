@@ -1,10 +1,14 @@
 import bcrypt, json, jwt, os, datetime
-from flask import Blueprint, request, Response, abort
+from flask import Blueprint, request, Response, abort, current_app
 from dotenv import load_dotenv
 from app import db, dotenv_path
 from sqlalchemy.exc import SQLAlchemyError
 from app.utils import sms
 from blinker import Namespace
+
+# Signal for events
+client_events = Namespace()
+client_signal = client_events.signal('client_signal')
 
 load_dotenv(dotenv_path)
 
@@ -36,12 +40,10 @@ def create_client():
                             password=hashed_password, active=False)
         db.session.add(new_client)
         db.session.commit()
+        # emit send sms signal
+        client_signal.send(current_app._get_current_object(), event_id=1,
+                           phone_number=phone_number)
 
-        # send SMS
-        message = 'account created successfully',
-        sender = '+441158245751'
-        receiver = phone_number
-        sms.send_sms(body=message, sender=sender, receiver=receiver)
         result = client_schema.dumps(new_client)
         return Response(result, 201, mimetype='application/json')
     except SQLAlchemyError as e:
@@ -115,3 +117,12 @@ def signin():
         }
         data = client_login_output_schema.dumps(result)
         return Response(data, 200, mimetype='application/json')
+
+
+@client_signal.connect
+def send_sms(app, **kwargs):
+    # send SMS
+    message = 'account created successfully',
+    sender = '+441158245751'
+    receiver = kwargs['phone_number']
+    sms.send_sms(body=message, sender=sender, receiver=receiver)
