@@ -17,6 +17,8 @@ setup(
         'flask-marshmallow>=0.11.0',
         'marshmallow-sqlalchemy>=0.22.3',
         'PyJWT>=1.7.1',
+        'twilio>=6.38.1',
+        'blinker>=1.4',
     ],
     classifiers=[
         'Environment :: Web Environment',

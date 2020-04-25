@@ -54,7 +54,9 @@ def signin():
 
     if bcrypt.checkpw(password.encode('utf-8'), studio_instance.password.encode('utf-8')):
         secret = os.getenv('SECRET_KEY')
-        token = jwt.encode({'id': studio_instance.id}, secret, algorithm='HS256')
+        expiration_date = datetime.datetime.utcnow() + datetime.timedelta(days=5)
+        token = jwt.encode({'id': studio_instance.id, 'exp': expiration_date, 'is_studio': True},
+                           secret, algorithm='HS256')
         result = {
             'token': token,
             'studio': studio_instance

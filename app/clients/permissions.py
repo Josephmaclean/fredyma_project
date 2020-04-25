@@ -3,6 +3,7 @@ from functools import wraps
 from flask import g, request, redirect, Response, abort
 from dotenv import load_dotenv
 from app import dotenv_path
+from jwt.exceptions import ExpiredSignatureError, InvalidSignatureError
 
 # load .env variables
 load_dotenv(dotenv_path)
@@ -23,18 +24,23 @@ def client_login_required(func):
         except KeyError:
             abort(Response("unauthorized", 401, mimetype='application/json'))
         token = authorization.split()[1]
-        payload = jwt.decode(token, os.getenv('SECRET_KEY'), algorithms=['HS256'])
-
-        if payload['exp'] < datetime.datetime.utcnow():
+        try:
+            payload = jwt.decode(token, os.getenv('SECRET_KEY'), algorithms=['HS256'])
+            if 'is_client' in payload and payload['is_client'] is True:
+                if 'user_id' in inspect.getfullargspec(func).args:
+                    kwargs['user_id'] = payload['id']
+                return func(*args, **kwargs)
+            else:
+                abort(Response("unauthorized", 401, mimetype='application/json'))
+        except ExpiredSignatureError:
             message = {
                 'error': 'token expired'
             }
             return abort(Response(json.dumps(message), 401, mimetype='application/json'))
-        # check if payload ia an argument of function
-        # if is argument return user_id
-        if 'payload' in inspect.getfullargspec(func).args:
-            kwargs['payload'] = payload
-
-        return func(*args, **kwargs)
+        except InvalidSignatureError:
+            message = {
+                'error': 'invalid token'
+            }
+            return abort(Response(json.dumps(message), 401, mimetype='application/json'))
 
     return view_wrapper
