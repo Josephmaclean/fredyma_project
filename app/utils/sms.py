@@ -12,6 +12,13 @@ client = Client(account_sid, auth_token)
 
 
 def send_sms(body, sender, receiver):
+    """
+
+    :param body: String parameter for email body
+    :param sender: String parameter for sender number
+    :param receiver: String parameter for receiver number
+    :return: dict
+    """
     message = client.messages \
         .create(
             body=body,
