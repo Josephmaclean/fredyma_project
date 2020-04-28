@@ -1,6 +1,9 @@
 import json, datetime
 from flask import Blueprint, Response, abort, request
-from app.clients import permissions, models
+from app.clients import (permissions as client_permissions,
+                         models as client_models)
+from app.studio import (permissions as studio_permissions,
+                        models as studio_models)
 from app import db
 
 from .models import Booking
@@ -10,13 +13,13 @@ bookings = Blueprint('booking', __name__)
 
 
 @bookings.route('/booking/new', methods=['POST'])
-@permissions.client_login_required
+@client_permissions.client_login_required
 def book_session(user_id):
     errors = bookings_input_schema.validate(request.json)
     if errors:
         return abort(Response(json.dumps(errors), 400, mimetype='application/json'))
 
-    client = models.Client.query.get(user_id)
+    client = client_models.Client.query.get(user_id)
     if client is None:
         message = {
             'error': 'Client does not exist'
@@ -48,3 +51,17 @@ def book_session(user_id):
 
     return Response(booking_schema.dumps(new_booking), 201,
                     mimetype='application/json')
+
+
+# @bookings.route('/booking/<pk:booking_id>/confirm', methods=['POST'])
+# @studio_permissions.studio_login_required
+# def confirm_booking(user_id):
+#     try:
+#         confirmation = request.json['confirmation']
+#         studio = studio_models.Studio.query.
+#     except KeyError:
+#         message = {
+#             "error": "Confirmation required"
+#         }
+#         return abort(Response(json.dumps(message), 400, mimetype='application/json'))
+
