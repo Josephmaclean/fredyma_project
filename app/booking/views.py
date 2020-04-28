@@ -53,12 +53,19 @@ def book_session(user_id):
                     mimetype='application/json')
 
 
-# @bookings.route('/booking/<pk:booking_id>/confirm', methods=['POST'])
+# @bookings.route('/booking/<int:booking_id>/confirm', methods=['POST'])
 # @studio_permissions.studio_login_required
 # def confirm_booking(user_id):
 #     try:
 #         confirmation = request.json['confirmation']
-#         studio = studio_models.Studio.query.
+#         studio = studio_models.Studio.query.get(user_id)
+#         if studio is None:
+#             message = {
+#                 'error': 'Studio not found'
+#             }
+#             return abort(Response(json.dumps(message), 404, mimetype='application/json'))
+#         x = 1 + 1
+#
 #     except KeyError:
 #         message = {
 #             "error": "Confirmation required"

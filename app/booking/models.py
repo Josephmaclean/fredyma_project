@@ -25,7 +25,7 @@ class Booking(db.Model):
     status = db.Column(db.Boolean, default=False)
 
     __table_args__ = (
-        db.UniqueConstraint('studio_id', 'start_time', 'end_time'),
+        db.UniqueConstraint('studio_id', 'start_time'),
     )
 
     def __repr__(self):

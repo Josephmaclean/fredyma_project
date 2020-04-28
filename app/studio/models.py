@@ -14,6 +14,7 @@ class Studio(db.Model):
     name = db.Column(db.String(30), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(), nullable=False)
+    bookings = db.relationship('Booking', backref='studio', lazy=True)
 
     def __repr__(self):
         studio_object = {
