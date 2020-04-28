@@ -7,9 +7,10 @@ from sqlalchemy.exc import SQLAlchemyError
 load_dotenv(dotenv_path)
 
 from app import db
-from .models import (Studio, studio_input_schema,
-                     studio_schema, studio_schema_signin_input,
-                     studio_signin_schema, studios_schema)
+from .models import Studio
+from .serializers import (studio_input_schema,
+                          studio_schema, studio_schema_signin_input,
+                          studio_signin_schema, studios_schema)
 
 studio = Blueprint('studio', __name__)
 
