@@ -1,3 +1,4 @@
+import json
 from app import db, ma
 from marshmallow import validate, fields
 
@@ -13,6 +14,15 @@ class Studio(db.Model):
     name = db.Column(db.String(30), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(), nullable=False)
+
+    def __repr__(self):
+        studio_object = {
+            'id': self.id,
+            'name': self.name,
+            'email': self.email,
+            'password': self.password
+        }
+        return json.dumps(studio_object)
 
 
 class StudioSchema(ma.Schema):

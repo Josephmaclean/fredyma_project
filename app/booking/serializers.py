@@ -20,26 +20,19 @@ class BookingInputSchema(ma.Schema):
     start_time = fields.Time(required=True)
     end_time = fields.Time(required=True)
     date = fields.Date(required=True)
+    session_type = fields.String(required=True, validate=validate.Length(min=5))
 
-    @validates('start_time')
-    def validate_start_time(self, value):
-        time_now = datetime.datetime.utcnow().time()
-        start_time = datetime.datetime.strptime(value, '%H:%M').time()
-
-        if time_now > start_time:
-            raise ValidationError('invalid start time')
-
-    @validates('end_time')
-    def validate_end_time(self, value):
-        start_time = datetime.datetime.strptime(value, '%H:%M')
-        end_time = datetime.datetime.strptime(self.start_time, '%H:%M')
-        if end_time > start_time:
-            raise ValidationError('end time must be greater than start time')
+    @validates('date')
+    def validate_date(self, value):
+        now = datetime.datetime.utcnow().date()
+        if now > value:
+            raise ValidationError('invalid date')
 
     class Meta:
-        fields = ['id', 'studio_id', 'client_id', 'start_time', 'end_time']
+        fields = ['studio_id', 'start_time', 'end_time',
+                  'date', 'session_type']
 
 
 booking_schema = BookingSchema()
 bookings_schema = BookingSchema(many=True)
-bookings_input_schema = BookingSchema(exclude=['client_id', 'status'])
+bookings_input_schema = BookingInputSchema()

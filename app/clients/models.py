@@ -1,6 +1,5 @@
-from app import db, ma
-from marshmallow import validate, fields
-
+import json
+from app import db
 
 # Pivot table for many to many relationship between client and studio
 client_studio = db.Table('client_studio',
@@ -25,4 +24,12 @@ class Client(db.Model):
     studios = db.relationship('Studio', secondary=client_studio, lazy='subquery',
                               backref=db.backref('clients', lazy=True))
 
-
+    def __repr__(self):
+        client_object = {
+            'id': self.id,
+            'name': self.name,
+            'phone_number': self.phone_number,
+            'password': self.password,
+            'active': self.active
+        }
+        return json.dumps(client_object)

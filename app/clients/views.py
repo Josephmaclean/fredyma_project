@@ -75,7 +75,8 @@ def confirm_client_number():
         }
         return Response(json.dumps(message), 200, mimetype='application/json')
     else:
-        return abort(Response("invalid activation code", 400, mimetype='application/json'))
+        return abort(Response("invalid activation code", 400,
+                              mimetype='application/json'))
 
 
 @clients.route('/clients/<int:client_id>', methods=['GET'])
@@ -102,7 +103,8 @@ def edit_client(client_id):
         client = Client.query.filter_by(id=client_id)
         client.update(dict(client_details))
         db.session.commit()
-        return Response(client_schema.dumps(client), 200, mimetype='application/json')
+        return Response(client_schema.dumps(client), 200,
+                        mimetype='application/json')
     except SQLAlchemyError as e:
         error = str(e.__dict__['orig'])
         return error
