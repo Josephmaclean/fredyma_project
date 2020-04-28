@@ -19,6 +19,7 @@ setup(
         'PyJWT>=1.7.1',
         'twilio>=6.38.1',
         'blinker>=1.4',
+        'sendgrid>=6.2.2'
     ],
     classifiers=[
         'Environment :: Web Environment',
