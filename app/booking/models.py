@@ -8,6 +8,12 @@ class SessionType(enum.Enum):
     long = '2 hours'
 
 
+class Status(enum.Enum):
+    confirmed = 'Confirmed'
+    pending = 'Pending'
+    declined = 'Declined'
+
+
 class Booking(db.Model):
     """
     Booking model
@@ -22,7 +28,7 @@ class Booking(db.Model):
     start_time = db.Column(db.DateTime)
     end_time = db.Column(db.DateTime)
     session_type = db.Column(db.Enum(SessionType, name='session_type'))
-    status = db.Column(db.Boolean, default=False)
+    status = db.Column(db.String(), default='pending', nullable=False)
 
     __table_args__ = (
         db.UniqueConstraint('studio_id', 'start_time'),
@@ -33,9 +39,6 @@ class Booking(db.Model):
             'id': self.id,
             'studio_id': self.studio_id,
             'client_id': self.client_id,
-            'start_time': self.start_time,
-            'end_time': self.end_time,
-            'session_type': self.session_type,
             'status': self.status
         }
         return json.dumps(booking_object)

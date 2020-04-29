@@ -7,7 +7,8 @@ from app.studio import (permissions as studio_permissions,
 from app import db
 
 from .models import Booking
-from .serializers import bookings_input_schema, booking_schema
+from .serializers import (bookings_input_schema, booking_schema,
+                          booking_confirmation_schema)
 
 bookings = Blueprint('booking', __name__)
 
@@ -44,7 +45,7 @@ def book_session(user_id):
 
     new_booking = Booking(studio_id=studio_id, start_time=start_time,
                           end_time=end_time, session_type=session_type,
-                          client_id=user_id, status=False)
+                          client_id=user_id, status='pending')
 
     db.session.add(new_booking)
     db.session.commit()
@@ -53,22 +54,23 @@ def book_session(user_id):
                     mimetype='application/json')
 
 
-@bookings.route('/booking/<int:booking_id>/confirm', methods=['POST'])
+@bookings.route('/booking/<int:booking_id>/status/update', methods=['POST'])
 @studio_permissions.studio_login_required
-def confirm_booking(user_id):
-    try:
-        confirmation = request.json['confirmation']
-        studio = studio_models.Studio.query.get(user_id)
-        if studio is None:
-            message = {
-                'error': 'Studio not found'
-            }
-            return abort(Response(json.dumps(message), 404, mimetype='application/json'))
-        x = 1 + 1
+def confirm_booking(booking_id, user_id):
+    errors = booking_confirmation_schema.validate(request.json)
+    if errors:
+        return abort(Response(json.dumps(errors), 400, mimetype='application/json'))
 
-    except KeyError:
+    confirmation = request.json['confirmation']
+    booking = Booking.query.filter_by(id=booking_id, studio_id=user_id).first()
+    if booking is None:
         message = {
-            "error": "Confirmation required"
+            'error': 'Booking not found'
         }
-        return abort(Response(json.dumps(message), 400, mimetype='application/json'))
-
+        return abort(Response(json.dumps(message), 404, mimetype='application/json'))
+    booking.status = confirmation
+    db.session.commit()
+    message = {
+        'message': 'booking status updated'
+    }
+    return Response(json.dumps(message), 200, mimetype='application/json')

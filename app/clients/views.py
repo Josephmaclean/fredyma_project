@@ -93,7 +93,6 @@ def get_client(client_id):
 @clients.route('/clients/<int:client_id>', methods=['PATCH'])
 @client_login_required
 def edit_client(client_id):
-    # print()
     errors = client_update_schema.validate(request.json)
     if errors:
         abort(Response(json.dumps(errors), 400, mimetype='application/json'))
@@ -118,7 +117,7 @@ def delete_client(client_id):
     return Response("", 204, mimetype='application/json')
 
 
-@clients.route('/auth/studio', methods=['POST'])
+@clients.route('/auth/client', methods=['POST'])
 def signin():
     errors = client_login_input_schema.validate(request.json)
     if errors:

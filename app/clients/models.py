@@ -23,6 +23,7 @@ class Client(db.Model):
     activation_code = db.Column(db.Integer)
     studios = db.relationship('Studio', secondary=client_studio, lazy='subquery',
                               backref=db.backref('clients', lazy=True))
+    bookings = db.relationship('Booking', backref='client', lazy=True)
 
     def __repr__(self):
         client_object = {

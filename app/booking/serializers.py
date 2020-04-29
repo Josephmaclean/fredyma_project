@@ -33,6 +33,14 @@ class BookingInputSchema(ma.Schema):
                   'date', 'session_type']
 
 
+class BookingConfirmation(ma.Schema):
+    confirmation = fields.String(required=True)
+
+    class Meta:
+        fields = ['confirmation']
+
+
 booking_schema = BookingSchema()
 bookings_schema = BookingSchema(many=True)
 bookings_input_schema = BookingInputSchema()
+booking_confirmation_schema = BookingConfirmation()

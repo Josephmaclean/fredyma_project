@@ -29,7 +29,7 @@ def studio_login_required(func):
             if 'is_studio' in payload and payload['is_studio'] is True:
 
                 if 'user_id' in inspect.getfullargspec(func).args:
-                    kwargs['user_id'] = payload['studio_id']
+                    kwargs['user_id'] = payload['id']
 
                 return func(*args, **kwargs)
             else:
