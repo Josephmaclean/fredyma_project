@@ -11,6 +11,7 @@ client_events = Namespace()
 client_signal = client_events.signal('client_signal')
 
 load_dotenv(dotenv_path)
+# app imports
 from .models import Client
 from .serializers import (client_input_schema,
                           client_schema, clients_schema, client_update_schema,
