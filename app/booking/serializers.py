@@ -34,10 +34,10 @@ class BookingInputSchema(ma.Schema):
 
 
 class BookingConfirmation(ma.Schema):
-    confirmation = fields.String(required=True)
+    confirm = fields.Boolean(required=True)
 
     class Meta:
-        fields = ['confirmation']
+        fields = ['confirm']
 
 
 booking_schema = BookingSchema()

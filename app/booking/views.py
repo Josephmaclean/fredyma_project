@@ -68,7 +68,8 @@ def confirm_booking(booking_id, user_id):
     if errors:
         return abort(Response(json.dumps(errors), 400, mimetype='application/json'))
 
-    confirmation = request.json['confirmation']
+    confirm = request.json['confirm']
+    confirmation = 'confirmed' if confirm else 'rejected'
     booking = Booking.query.filter_by(id=booking_id, studio_id=user_id).first()
     if booking is None:
         message = {
@@ -81,7 +82,7 @@ def confirm_booking(booking_id, user_id):
     studio_name = booking.studio.name
     start_time = booking.start_time.strftime("%m/%d/%Y, %H:%M")
     end_time = booking.end_time.strftime("%m/%d/%Y, %H:%M")
-    status = "confirmed" if confirmation else "cancelled"
+    status = "confirmed" if confirm else "cancelled"
     sms_message = f"studio booking with {studio_name} from " \
                   f"{start_time} to {end_time} has been {status}"
     message_object = {
