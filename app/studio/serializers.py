@@ -33,6 +33,6 @@ class LoginSchema(ma.Schema):
 
 studio_schema = StudioSchema(exclude=['password'])
 studio_input_schema = StudioSchema()
-studios_schema = StudioSchema(many=True, exclude=['password'])
+studios_schema = StudioSchema(many=True, exclude=['password', 'engineers'])
 studio_schema_signin_input = StudioSchema(exclude=['name', 'engineers'])
 studio_signin_schema = LoginSchema()
