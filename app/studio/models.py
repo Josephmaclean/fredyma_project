@@ -14,6 +14,7 @@ class Studio(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(), nullable=False)
     bookings = db.relationship('Booking', backref='studio', lazy=True)
+    engineers = db.relationship('Engineers', backref='studio', lazy=True)
 
     def __repr__(self):
         studio_object = {
@@ -23,4 +24,3 @@ class Studio(db.Model):
             'password': self.password
         }
         return json.dumps(studio_object)
-

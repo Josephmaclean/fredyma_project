@@ -68,8 +68,8 @@ def signin():
 @studio.route('/studio/<int:studio_id>', methods=['GET'])
 def get_studio(studio_id):
     try:
-        studio = Studio.query.filter_by(id=studio_id).first_or_404()
-        result = studio_schema.dumps(studio)
+        studio_query = Studio.query.get(studio_id)
+        result = studio_schema.dumps(studio_query)
         return Response(result, 200, mimetype='application/json')
     except SQLAlchemyError as e:
         error = str(e.__dict__['orig'])
