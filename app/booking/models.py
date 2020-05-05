@@ -29,9 +29,10 @@ class Booking(db.Model):
     end_time = db.Column(db.DateTime)
     session_type = db.Column(db.Enum(SessionType, name='session_type'))
     status = db.Column(db.String(), default='pending', nullable=False)
+    sound_engineer_id = db.Column(db.Integer, db.ForeignKey('sound_engineer.id'), nullable=False)
 
     __table_args__ = (
-        db.UniqueConstraint('studio_id', 'start_time'),
+        db.UniqueConstraint('studio_id', 'start_time', 'sound_engineer_id'),
     )
 
     def __repr__(self):

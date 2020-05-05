@@ -16,6 +16,7 @@ ma = Marshmallow()
 from .clients.views import clients
 from .studio.views import studio
 from .booking.views import bookings
+from .engineers.views import sound_engineer
 
 
 def create_app():
@@ -47,4 +48,5 @@ def register_blueprints(app):
     app.register_blueprint(clients)
     app.register_blueprint(studio)
     app.register_blueprint(bookings)
+    app.register_blueprint(sound_engineer)
     return None

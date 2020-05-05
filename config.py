@@ -21,9 +21,10 @@ class Config:
         .format(user=user, pw=password, url=url, db=db)
     # General
     TESTING = True
-    FLASK_DEBUG = True
+    DEBUG = True
     DEVELOPMENT = True
     SECRET_KEY = 'SECRET'
+    FLASK_RUN_PORT = 8000
 
     # Database
     SQLALCHEMY_DATABASE_URI = DB_URL
