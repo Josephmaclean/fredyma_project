@@ -52,5 +52,10 @@ def update(engineer_id, user_id):
         return error
 
 
-# TODO: delete engineer
-
+@sound_engineer.route('/engineer/<int:engineer_id>/delete', methods=['DELETE'])
+@permissions.studio_login_required
+def update(engineer_id, user_id):
+    engineer = Engineers.query.filter_by(id=engineer_id, studio_id=user_id)
+    engineer.delete()
+    db.session.commit()
+    return Response("", 204, mimetype='application/json')
