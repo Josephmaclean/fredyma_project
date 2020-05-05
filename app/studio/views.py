@@ -92,3 +92,6 @@ def delete_studio(studio_id):
     Studio.query.filter_by(id=studio_id).delete()
     db.session.commit()
     return Response("", 204, mimetype='application/json')
+
+
+# TODO: update studio

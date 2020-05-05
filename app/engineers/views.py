@@ -31,3 +31,13 @@ def create(user_id):
     except SQLAlchemyError as e:
         error = str(e.__dict__['orig'])
         return error
+
+
+@sound_engineer.route('/engineer/<int:engineer_id>/update', methods=['PATCH'])
+@permissions.studio_login_required
+def update(engineer_id, user_id):
+    pass
+
+
+# TODO: delete engineer
+
