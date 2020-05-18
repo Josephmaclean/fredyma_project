@@ -14,8 +14,7 @@ def studio_login_required(func):
     :param func:
     :return: function
     """
-    wraps(func)
-
+    @wraps(func)
     def view_wrapper(*args, **kwargs):
         authorization = ""
         try:

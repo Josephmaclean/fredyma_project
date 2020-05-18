@@ -1,8 +1,14 @@
-import os, json, jwt, bcrypt, datetime
+import bcrypt
+import datetime
+import json
+import jwt
+import os
+
 from dotenv import load_dotenv
-from app import dotenv_path
 from flask import Blueprint, request, Response, abort
 from sqlalchemy.exc import SQLAlchemyError
+
+from app import dotenv_path
 
 load_dotenv(dotenv_path)
 
