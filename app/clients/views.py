@@ -1,10 +1,16 @@
-import bcrypt, json, jwt, os, datetime, random
-from flask import Blueprint, request, Response, abort, current_app
-from dotenv import load_dotenv
-from app import db, dotenv_path
-from sqlalchemy.exc import SQLAlchemyError
-from app.utils import sms
+import bcrypt
+import datetime
+import json
+import jwt
+import os
+import random
 from blinker import Namespace
+from dotenv import load_dotenv
+from flask import Blueprint, request, Response, abort, current_app
+from sqlalchemy.exc import SQLAlchemyError
+
+from app import db, dotenv_path
+from app.utils import sms
 
 # Signal for events
 client_events = Namespace()
@@ -14,7 +20,7 @@ load_dotenv(dotenv_path)
 # app imports
 from .models import Client
 from .serializers import (client_input_schema,
-                          client_schema, clients_schema, client_update_schema,
+                          client_schema, client_update_schema,
                           client_login_output_schema, client_login_input_schema,
                           client_activation_sanitizer)
 
