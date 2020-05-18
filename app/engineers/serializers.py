@@ -1,9 +1,9 @@
-from app import ma
-from marshmallow import fields, validate, validates, ValidationError
-from app.studio import serializers as studio_serializer
+# from app import ma
+from marshmallow import fields, validate, Schema
+from ..studio import serializers as studio_serializer
 
 
-class EngineerSchema(ma.Schema):
+class EngineerSchema(Schema):
     id = fields.Integer(required=True)
     name = fields.String(required=True, validate=validate.Length(min=2))
     role = fields.String(required=True, validate=validate.OneOf([
@@ -16,7 +16,7 @@ class EngineerSchema(ma.Schema):
         fields = ['id', 'name', 'role', 'studio_id', 'studio']
 
 
-class UpdateEngineerSchema(ma.Schema):
+class UpdateEngineerSchema(Schema):
     name = fields.String(required=True, validate=validate.Length(min=2))
     role = fields.String(required=True, validate=validate.OneOf([
         'mixing engineer', 'mastering engineer', 'recording engineer',

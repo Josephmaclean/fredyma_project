@@ -2,7 +2,7 @@ import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from flask_marshmallow import  Marshmallow
+from flask_marshmallow import Marshmallow
 
 # load dotenv in the base root
 APP_ROOT = os.path.join(os.path.dirname(__file__), '..')  # refers to application_top
@@ -16,7 +16,7 @@ ma = Marshmallow()
 from .clients.views import clients
 from .studio.views import studio
 from .booking.views import bookings
-from .engineers.views import sound_engineer
+from .engineers.views import engineers
 
 
 def create_app():
@@ -48,5 +48,5 @@ def register_blueprints(app):
     app.register_blueprint(clients)
     app.register_blueprint(studio)
     app.register_blueprint(bookings)
-    app.register_blueprint(sound_engineer)
+    app.register_blueprint(engineers)
     return None

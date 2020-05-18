@@ -1,19 +1,20 @@
 import json
 from flask import Blueprint, Response, abort, request
-from app import db
 from sqlalchemy.exc import SQLAlchemyError
+
+from app import db
+
+
 from .models import Engineers
-from app.studio import permissions
+from .serializers import create_engineer_schema, engineer_schema, \
+    update_engineer_schema
+from .permissions import studio_login_required
 
-sound_engineer = Blueprint('sound_engineer', __name__)
-
-# import serializers and deserializers
-from .serializers import (engineer_schema,
-                          create_engineer_schema, update_engineer_schema)
+engineers = Blueprint('engineers', __name__)
 
 
-@sound_engineer.route('/engineer/create', methods=['POST'])
-@permissions.studio_login_required
+@engineers.route('/engineer/create', methods=['POST'])
+@studio_login_required
 def create(user_id):
     errors = create_engineer_schema.validate(request.json)
     if errors:
@@ -24,18 +25,18 @@ def create(user_id):
     role = details['role']
 
     try:
-        engineer = Engineers(name=name, role=role, studio_id=studio_id)
-        db.session.add(engineer)
+        engineer_instance = Engineers(name=name, role=role, studio_id=studio_id)
+        db.session.add(engineer_instance)
         db.session.commit()
-        result = engineer_schema.dumps(engineer)
+        result = engineer_schema.dumps(engineer_instance)
         return Response(result, 201, mimetype='application/json')
     except SQLAlchemyError as e:
         error = str(e.__dict__['orig'])
         return error
 
 
-@sound_engineer.route('/engineer/<int:engineer_id>/update', methods=['PATCH'])
-@permissions.studio_login_required
+@engineers.route('/engineer/<int:engineer_id>', methods=['PATCH'])
+@studio_login_required
 def update(engineer_id, user_id):
     errors = update_engineer_schema.validate(request.json)
     if errors:
@@ -43,19 +44,19 @@ def update(engineer_id, user_id):
 
     try:
         details = request.json
-        engineer = Engineers.query.filter_by(id=engineer_id, studio_id=user_id)
-        engineer.update(dict(details))
+        engineer_instance = Engineers.query.filter_by(id=engineer_id, studio_id=user_id)
+        engineer_instance.update(dict(details))
         db.session.commit()
-        return Response(engineer_schema.dumps(engineer))
+        return Response(engineer_schema.dumps(engineer_instance))
     except SQLAlchemyError as e:
         error = str(e.__dict__['orig'])
         return error
 
 
-@sound_engineer.route('/engineer/<int:engineer_id>/delete', methods=['DELETE'])
-@permissions.studio_login_required
-def update(engineer_id, user_id):
-    engineer = Engineers.query.filter_by(id=engineer_id, studio_id=user_id)
-    engineer.delete()
+@engineers.route('/engineer/<int:engineer_id>/delete', methods=['DELETE'])
+@studio_login_required
+def delete(user_id, engineer_id):
+    engineer_instance = Engineers.query.filter_by(id=engineer_id, studio_id=user_id)
+    engineer_instance.delete()
     db.session.commit()
     return Response("", 204, mimetype='application/json')

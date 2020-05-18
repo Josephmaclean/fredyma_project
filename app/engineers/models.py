@@ -1,4 +1,4 @@
-import enum, json
+import json
 from app import db
 
 
