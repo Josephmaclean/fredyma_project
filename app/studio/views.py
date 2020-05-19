@@ -56,8 +56,13 @@ def signin():
     password = details['password']
 
     if errors:
-        abort(Response(json.dumps(errors), 400, mimetype='application/json'))
+        return abort(Response(json.dumps(errors), 400, mimetype='application/json'))
     studio_instance = Studio.query.filter_by(email=email).first()
+    if studio_instance is None:
+        message = {
+            'error': 'unauthorized'
+        }
+        return abort(Response(json.dumps(message), 401, mimetype='application/json'))
 
     if bcrypt.checkpw(password.encode('utf-8'), studio_instance.password.encode('utf-8')):
         secret = os.getenv('SECRET_KEY')

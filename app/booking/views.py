@@ -3,6 +3,7 @@ from flask import Blueprint, Response, abort, request, current_app
 from app import db
 from blinker import Namespace
 from app.utils import sms
+from sqlalchemy.exc import SQLAlchemyError
 
 # Signal for events
 booking_events = Namespace()
@@ -15,7 +16,8 @@ from app.studio import (permissions as studio_permissions,
                         models as studio_models)
 from .models import Booking
 from .serializers import (bookings_input_schema, booking_schema,
-                          booking_confirmation_schema)
+                          booking_confirmation_schema, client_booking_view_schema,
+                          studio_booking_view_schema)
 
 bookings = Blueprint('booking', __name__)
 
@@ -38,6 +40,7 @@ def book_session(user_id):
     details = request.json
     studio_id = details['studio_id']
     session_type = details['session_type']
+    engineer_id = details['engineer_id']
 
     start_time = datetime.datetime.strptime(f"{details['date']} {details['start_time']}",
                                             '%Y-%m-%d %H:%M')
@@ -52,7 +55,7 @@ def book_session(user_id):
 
     new_booking = Booking(studio_id=studio_id, start_time=start_time,
                           end_time=end_time, session_type=session_type,
-                          client_id=user_id, status='pending')
+                          client_id=user_id, status='pending', sound_engineer_id=engineer_id)
 
     db.session.add(new_booking)
     db.session.commit()
@@ -95,6 +98,28 @@ def confirm_booking(booking_id, user_id):
         'message': 'booking status updated'
     }
     return Response(json.dumps(message), 200, mimetype='application/json')
+
+
+@bookings.route('/clients/<int:client_id>/bookings', methods=['GET'])
+@client_permissions.client_login_required
+def show_client_bookings(client_id):
+    try:
+        client_bookings = Booking.query.filter_by(client_id=client_id).all()
+        return Response(client_booking_view_schema.dumps(client_bookings), 200, mimetype='application/json')
+    except SQLAlchemyError as e:
+        error = str(e.__dict__['orig'])
+        return error
+
+
+@bookings.route('/studio/<int:studio_id>/bookings', methods=['GET'])
+@studio_permissions.studio_login_required
+def show_studio_bookings(studio_id):
+    try:
+        studio_bookings = Booking.query.filter_by(studio_id=studio_id).all()
+        return Response(studio_booking_view_schema.dumps(studio_bookings), 200, mimetype='application/json')
+    except SQLAlchemyError as e:
+        error = str(e.__dict__['orig'])
+        return error
 
 
 @booking_signal.connect

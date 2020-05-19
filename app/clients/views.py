@@ -134,11 +134,11 @@ def signin():
     password = details['password']
 
     client = Client.query.filter_by(phone_number=phone_number).first()
-    if client == {}:
+    if client is None:
         message = {
             'error': 'unauthorized'
         }
-        abort(Response(json.dumps(message), 401, mimetype='application/json'))
+        return abort(Response(json.dumps(message), 401, mimetype='application/json'))
 
     instance_id = client.id
     if bcrypt.checkpw(password.encode('utf-8'), client.password.encode('utf-8')):

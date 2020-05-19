@@ -10,7 +10,7 @@ class EngineerSchema(Schema):
         'mixing engineer', 'mastering engineer', 'recording engineer',
         'producer', 'song composer', 'sound engineer']))
     studio_id = fields.Integer(required=True)
-    studio = fields.Nested(studio_serializer.StudioSchema(exclude=['engineers']))
+    studio = fields.Nested(studio_serializer.StudioSchema(exclude=['engineers', 'password', 'email']))
 
     class Meta:
         fields = ['id', 'name', 'role', 'studio_id', 'studio']

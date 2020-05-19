@@ -23,6 +23,12 @@ class StudioSchema(ma.Schema):
         fields = ['id', 'name', 'email', 'password', 'engineers']
 
 
+class StudioNullableSchema(ma.Schema):
+    name = fields.Str()
+    email = fields.Email()
+    password = fields.Str()
+
+
 class LoginSchema(ma.Schema):
     token = fields.Str()
     studio = fields.Nested(StudioSchema(exclude=['password']))
